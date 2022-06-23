@@ -1,6 +1,7 @@
 package it.polito.tdp.genes;
 
 import java.net.URL;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.genes.model.Model;
@@ -27,19 +28,35 @@ public class FXMLController {
     private Button btnRicerca;
 
     @FXML
-    private ComboBox<?> boxLocalizzazione;
+    private ComboBox<String> boxLocalizzazione;
 
     @FXML
     private TextArea txtResult;
 
     @FXML
     void doRicerca(ActionEvent event) {
-
+    	
+    	txtResult.clear();
+    	
+    	if (boxLocalizzazione.getValue()!= null) {
+    		for(String v: model.calcolaPercorso(this.boxLocalizzazione.getValue())) {
+    			this.txtResult.appendText(v+"\n");
+    		}
+    	}
     }
 
     @FXML
     void doStatistiche(ActionEvent event) {
-
+    	txtResult.clear();
+    	
+    	if (boxLocalizzazione.getValue()!= null) {
+    		txtResult.appendText( "Adiacenti a: "+boxLocalizzazione.getValue());
+    		Map <String, Integer> map= model.getConnessioni(boxLocalizzazione.getValue());
+    		for (String v: map.keySet()) {
+    			txtResult.appendText("\n" +v+"  "+ map.get(v));
+    		}
+    			
+    	}
     }
 
     @FXML
@@ -53,5 +70,7 @@ public class FXMLController {
 
 	public void setModel(Model model) {
 		this.model = model;
+		txtResult.appendText(model.creaGrafo());
+		boxLocalizzazione.getItems().addAll(model.getVertici());
 	}
 }
